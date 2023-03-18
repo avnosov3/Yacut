@@ -1,11 +1,11 @@
 from flask_wtf import FlaskForm
 from wtforms import URLField, SubmitField
-from wtforms.validators import DataRequired, Optional, URL
+from wtforms.validators import DataRequired, Optional, URL, Length
 
 
 class URLMapForm(FlaskForm):
     original_link = URLField(
-        'Введите ссылку',
+        'Введите длинную ссылку',
         validators=[
             DataRequired(message='Обязательное поле'),
             URL()
@@ -15,7 +15,8 @@ class URLMapForm(FlaskForm):
         'Введите короткий вариант ссылки',
         validators=[
             Optional(),
-            URL()
+            # URL(),
+            Length(1, 16)
         ]
     )
-    button = SubmitField('Добавить')
+    submit = SubmitField('Создать')

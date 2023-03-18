@@ -32,4 +32,4 @@ def index_view():
     db.session.add(urlmap)
     db.session.commit()
     # return 'new's
-    return render_template('main.html')
+    return render_template('main.html', form=form)
