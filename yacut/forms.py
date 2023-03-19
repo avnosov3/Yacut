@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import URLField, SubmitField
-from wtforms.validators import DataRequired, Optional, URL, Length
+from wtforms.validators import DataRequired, Optional, URL, Length, Regexp
 
 
 class URLMapForm(FlaskForm):
@@ -8,15 +8,16 @@ class URLMapForm(FlaskForm):
         'Введите длинную ссылку',
         validators=[
             DataRequired(message='Обязательное поле'),
-            URL()
+            URL(message='Введите ссылку')
         ]
     )
     custom_id = URLField(
         'Введите короткий вариант ссылки',
         validators=[
-            Optional(),
+            Optional(strip_whitespace=False),
             # URL(),
-            Length(1, 16)
+            Length(1, 16),
+            Regexp(r'^\S+$', message='Короткая ссылка не должна содержать пробелы')
         ]
     )
     submit = SubmitField('Создать')

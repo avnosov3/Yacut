@@ -48,7 +48,15 @@
         </div>
         <div class="col-sm">
           <p class="text-center">
-          <h5 class="text-center">Пример информационного сообщения</h5>
+            <h5>
+              {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                  {% for message in messages %}
+                    {{ message }}
+                  {% endfor %}
+                {% endif %}
+              {% endwith %}
+            </h5>
           </p>
         </div>
         <div class="col-sm">

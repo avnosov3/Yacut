@@ -1,6 +1,6 @@
 import random
 
-from flask import render_template
+from flask import render_template, flash
 
 from yacut import app, db
 from .models import URLMap
@@ -25,11 +25,19 @@ def index_view():
     form = URLMapForm()
     if not form.validate_on_submit():
         return render_template('main.html', form=form)
-    urlmap = URLMap(
-        original=form.original_link.data,
-        short=form.custom_id.data,
-    )
-    db.session.add(urlmap)
-    db.session.commit()
+    short = form.custom_id.data
+    print(short)
+    original = form.original_link.data
+    if short != '':
+        urlmap = URLMap(
+            original=original,
+            short=short,
+        )
+        db.session.add(urlmap)
+        db.session.commit()
     # return 'new's
+        return render_template('main.html', form=form)
+    db.session.add(URLMap(original=original, short=get_unique_short_id()))
+    db.session.commit()
+    flash(get_unique_short_id())
     return render_template('main.html', form=form)
