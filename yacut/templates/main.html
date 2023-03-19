@@ -49,10 +49,18 @@
         <div class="col-sm">
           <p class="text-center">
             <h5>
-              {% with messages = get_flashed_messages() %}
+              {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
-                  {% for message in messages %}
-                    {{ message }}
+                  {% for category, message in messages %}
+                    {% if category == "unique" %}
+                      <span style="color:red">{{ message }}</span>
+                    {% endif %}
+                    {% if category == "short" %}
+                      {{ message }}
+                    {% endif %}
+                    {% if category == "short-link" %}
+                      <a href="{{ urlmap.original }}">{{ message }}</a>
+                    {% endif %}
                   {% endfor %}
                 {% endif %}
               {% endwith %}
