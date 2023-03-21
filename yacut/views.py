@@ -1,12 +1,12 @@
 import random
-from urllib.parse import urlparse
 
-from flask import render_template, flash
+from flask import flash, redirect, render_template
 from sqlalchemy.exc import IntegrityError
 
+from settings import SHORT, SHORT_LINK, UNIQUE
 from yacut import app, db
-from .models import URLMap
 from .forms import URLMapForm
+from .models import URLMap
 
 SAMPLE = (
     '123456789'
@@ -15,11 +15,11 @@ SAMPLE = (
 )
 
 SHORT_MESSAGE = 'Ваша короткая ссылка готова:'
-UNIQUE_MESSAGE = 'Такой вариант короткой ссылки уже существует'
+WEB_UNIQUE_MESSAGE = 'Имя {} уже занято!'
 
 
 def get_unique_short_id():
-    short_link = ''.join(random.choice(SAMPLE) for _ in range(random.randint(1, 6)))
+    short_link = ''.join(random.choice(SAMPLE) for _ in range(6))
     return short_link
 
 
@@ -28,7 +28,7 @@ def index_view():
     form = URLMapForm()
     if not form.validate_on_submit():
         return render_template('main.html', form=form)
-    short = get_unique_short_id() if form.custom_id.data == '' else form.custom_id.data
+    short = get_unique_short_id() if form.custom_id.data in ('', None) else form.custom_id.data
     original = form.original_link.data
     try:
         urlmap = URLMap(
@@ -37,11 +37,16 @@ def index_view():
         )
         db.session.add(urlmap)
         db.session.commit()
-        flash(SHORT_MESSAGE, 'short')
-        flash(urlparse(original)._replace(
-            path=short, params='', query='', fragment='').geturl(),
-            'short-link'
+        flash(SHORT_MESSAGE, SHORT)
+        flash(
+            urlmap.get_short_link(),
+            SHORT_LINK
         )
     except IntegrityError:
-        flash(UNIQUE_MESSAGE, 'unique')
+        flash(WEB_UNIQUE_MESSAGE.format(short), UNIQUE)
     return render_template('main.html', form=form, urlmap=urlmap)
+
+
+@app.route('/<string:short>')
+def short_url(short):
+    return redirect(URLMap.query.filter_by(short=short).first_or_404().original)
