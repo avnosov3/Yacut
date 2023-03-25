@@ -15,8 +15,9 @@ def index_view():
         return render_template('index.html', form=form)
     original = form.original_link.data
     short = form.data.get('custom_id')
-    urlmap = URLMap.create(original=original, short=short)
-    return render_template('index.html', form=form, urlmap=urlmap)
+    return render_template(
+        'index.html', form=form,
+        urlmap=URLMap.create(original=original, short=short))
 
 
 @app.route('/<string:short>')
