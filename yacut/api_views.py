@@ -29,7 +29,7 @@ def generate_link():
         raise InvalidAPIUsage(EMPTY_URL_MESSAGE, 400)
     try:
         urlmap = URLMap.create(
-            data[URL], data.get(CUSTOM_ID), api_validation=True
+            data[URL], data.get(CUSTOM_ID) or None, api_validation=True
         )
     except ValueError as error:
         raise InvalidAPIUsage(str(error))

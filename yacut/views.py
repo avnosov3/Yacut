@@ -14,7 +14,7 @@ def index_view():
     if not form.validate_on_submit():
         return render_template('index.html', form=form)
     original = form.original_link.data
-    short = form.data.get('custom_id')
+    short = form.data.get('custom_id') or None
     return render_template(
         'index.html', form=form,
         urlmap=URLMap.create(original=original, short=short))

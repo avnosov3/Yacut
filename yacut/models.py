@@ -51,8 +51,9 @@ class URLMap(db.Model):
         return URLMap.query.filter_by(short=short).first()
 
     @staticmethod
-    def create(original, short, api_validation=False):
-        if short in ('', None):
+    def create(original, short=None, api_validation=False):
+        # if short in ('', None):
+        if short is None:
             short = URLMap.get_unique_short_id()
         elif api_validation:
             original_len = len(original)
