@@ -11,7 +11,6 @@ WEB_UNIQUE_MESSAGE = 'Имя {} уже занято!'
 SAMPLE = ascii_letters + digits
 PATTERN = rf'^[{SAMPLE}]+$'
 RANDOM_SHORT_LEN = 6
-ATTEMPTS = 5
 ORIGINAL_LEN = 4096
 MAX_SHORT_LEN = 16
 SHORT_ERROR = 'Не удалось сгенерировать уникальную короткую ссылку'
@@ -38,10 +37,9 @@ class URLMap(db.Model):
 
     @staticmethod
     def get_unique_short_id(symbols=SAMPLE, length=RANDOM_SHORT_LEN):
-        for _ in range(ATTEMPTS):
-            short_link = ''.join(random.choices(symbols, k=length))
-            if not URLMap.get_urlmap_by_short(short=short_link):
-                return short_link
+        short_link = ''.join(random.choices(symbols, k=length))
+        if not URLMap.get_urlmap_by_short(short=short_link):
+            return short_link
         raise ValueError(SHORT_ERROR)
 
     @staticmethod
