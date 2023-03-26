@@ -1,9 +1,8 @@
 from flask import jsonify, request
 
-from settings import CUSTOM_ID, URL
 from yacut import app
-from .error_handlers import InvalidAPIUsage
-from .models import URLMap
+from yacut.error_handlers import InvalidAPIUsage, ValidationError
+from yacut.models import URLMap
 
 NOT_FOUND_MESSAGE = 'Указанный id не найден'
 EMPTY_MESSAGE = 'Отсутствует тело запроса'
@@ -25,12 +24,12 @@ def generate_link():
     data = request.get_json()
     if data is None:
         raise InvalidAPIUsage(EMPTY_MESSAGE, 400)
-    if URL not in data:
+    if 'url' not in data:
         raise InvalidAPIUsage(EMPTY_URL_MESSAGE, 400)
     try:
         urlmap = URLMap.create(
-            data[URL], data.get(CUSTOM_ID) or None, api_validation=True
+            data['url'], data.get('custom_id'), to_validate=True
         )
-    except ValueError as error:
+    except ValidationError as error:
         raise InvalidAPIUsage(str(error))
     return jsonify(urlmap.to_dict()), 201

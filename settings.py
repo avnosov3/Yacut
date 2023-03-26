@@ -1,4 +1,6 @@
 import os
+import re
+from string import ascii_letters, digits
 
 
 class Config(object):
@@ -7,5 +9,9 @@ class Config(object):
     SECRET_KEY = os.getenv('SECRET_KEY', 'ART')
 
 
-URL = 'url'
-CUSTOM_ID = 'custom_id'
+ORIGINAL_LEN = 4096
+SHORT_LEN = 16
+RANDOM_SHORT_LEN = 6
+SAMPLE = ascii_letters + digits
+PATTERN = rf'^[{re.escape(SAMPLE)}]+$'
+ATTEMPTS = 3

@@ -1,19 +1,16 @@
 import random
 import re
 from datetime import datetime
-from string import ascii_letters, digits
 
 from flask import url_for
 
+from settings import (ATTEMPTS, ORIGINAL_LEN, PATTERN, RANDOM_SHORT_LEN,
+                      SAMPLE, SHORT_LEN)
 from yacut import db
+from yacut.error_handlers import ShortGenerateError, ValidationError
 
+# SHORT_ERROR = 'Не удалось сгенерировать уникальную короткую ссылку'
 WEB_UNIQUE_MESSAGE = 'Имя {} уже занято!'
-SAMPLE = ascii_letters + digits
-PATTERN = rf'^[{SAMPLE}]+$'
-RANDOM_SHORT_LEN = 6
-ORIGINAL_LEN = 4096
-MAX_SHORT_LEN = 16
-SHORT_ERROR = 'Не удалось сгенерировать уникальную короткую ссылку'
 SHORT_MESSAGE = 'Указано недопустимое имя для короткой ссылки'
 ORIGINAL_LEN_ERROR = 'Длина оригинальной ссылки "{}" больше чем 4096'
 SHORT_LEN_ERROR = 'Длина короткой ссылки "{}" больше чем 16'
@@ -23,7 +20,7 @@ API_UNIQUE_SHORT_ERROR = 'Имя "{}" уже занято.'
 class URLMap(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     original = db.Column(db.String(ORIGINAL_LEN), nullable=False)
-    short = db.Column(db.String(MAX_SHORT_LEN), nullable=False, unique=True)
+    short = db.Column(db.String(SHORT_LEN), nullable=False, unique=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
     def original_to_dict(self):
@@ -37,10 +34,13 @@ class URLMap(db.Model):
 
     @staticmethod
     def get_unique_short_id(symbols=SAMPLE, length=RANDOM_SHORT_LEN):
-        short_link = ''.join(random.choices(symbols, k=length))
-        if not URLMap.get_urlmap_by_short(short=short_link):
-            return short_link
-        raise ValueError(SHORT_ERROR)
+        for _ in range(ATTEMPTS):
+            short_link = ''.join(random.choices(symbols, k=length))
+            if not URLMap.get_urlmap_by_short(short=short_link):
+                return short_link
+        raise ShortGenerateError(
+            WEB_UNIQUE_MESSAGE.format(short_link)
+        )
 
     @staticmethod
     def get_original_or_404(short):
@@ -51,22 +51,21 @@ class URLMap(db.Model):
         return URLMap.query.filter_by(short=short).first()
 
     @staticmethod
-    def create(original, short=None, api_validation=False):
-        # if short in ('', None):
-        if short is None:
+    def create(original, short=None, to_validate=False):
+        if not short:
             short = URLMap.get_unique_short_id()
-        elif api_validation:
+        if to_validate:
             original_len = len(original)
             if original_len > ORIGINAL_LEN:
-                raise ValueError(ORIGINAL_LEN_ERROR.format(original_len))
+                raise ValidationError(ORIGINAL_LEN_ERROR.format(original_len))
             short_len = len(short)
-            if short_len > MAX_SHORT_LEN:
+            if short_len > SHORT_LEN:
                 # raise ValueError(SHORT_LEN_ERROR.format(short_len))
-                raise ValueError(SHORT_MESSAGE)
+                raise ValidationError(SHORT_MESSAGE)
             if not re.match(PATTERN, short):
-                raise ValueError(SHORT_MESSAGE)
+                raise ValidationError(SHORT_MESSAGE)
             if URLMap.get_urlmap_by_short(short):
-                raise ValueError(API_UNIQUE_SHORT_ERROR.format(short))
+                raise ValidationError(API_UNIQUE_SHORT_ERROR.format(short))
         urlmap = URLMap(original=original, short=short)
         db.session.add(urlmap)
         db.session.commit()

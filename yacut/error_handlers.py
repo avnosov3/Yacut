@@ -1,6 +1,6 @@
 from flask import jsonify, render_template
 
-from yacut import app
+from yacut import app, db
 
 
 class InvalidAPIUsage(Exception):
@@ -24,3 +24,17 @@ def invalid_api_usage(error):
 @app.errorhandler(404)
 def page_not_fount(error):
     return render_template('404.html'), 404
+
+
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()
+    return render_template('500.html'), 500
+
+
+class ShortGenerateError(Exception):
+    pass
+
+
+class ValidationError(Exception):
+    pass

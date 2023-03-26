@@ -46,15 +46,13 @@ python3 -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-создать БД и провести миграции
+Провести миграции
 
 ```
-flask db init
-flask db migrate
 flask db upgrade
 ```
 
-запустить проект
+Запустить проект
 
 ```
 flask run

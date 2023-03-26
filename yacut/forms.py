@@ -3,15 +3,18 @@ from wtforms import SubmitField, URLField
 from wtforms.validators import (URL, DataRequired, Length, Optional, Regexp,
                                 ValidationError)
 
-from yacut.models import MAX_SHORT_LEN, ORIGINAL_LEN, PATTERN, URLMap
+from settings import ORIGINAL_LEN, PATTERN, SHORT_LEN
+from yacut.models import WEB_UNIQUE_MESSAGE, URLMap
 
 URL_MESSAGE = 'Проверьте формат ссылки'
-SPACE_MESSAGE = 'Короткая ссылка не должна содержать пробелы'
+SPACE_MESSAGE = 'Проверьте формат короткой ссылки'
 REQUIRED_FIELD_MESSAGE = 'Обязательное поле'
 ORIGINAL_LINK_MESSAGE = 'Введите длинную ссылку'
 CUSTOM_ID_MESSAGE = 'Введите короткий вариант ссылки'
 SUMBIT_MESSAGE = 'Создать'
-WEB_UNIQUE_MESSAGE = 'Имя {} уже занято!'
+# WEB_UNIQUE_MESSAGE = 'Имя {} уже занято!'
+ORIGINAL_LEN_MESSAGE = f'Размер ссылки должен быть меньше {ORIGINAL_LEN}'
+SHORT_LEN_MESSAGE = f'Размер короткой ссылки должен быть меньше {SHORT_LEN}'
 
 
 class URLMapForm(FlaskForm):
@@ -20,14 +23,14 @@ class URLMapForm(FlaskForm):
         validators=[
             DataRequired(message=REQUIRED_FIELD_MESSAGE),
             URL(message=URL_MESSAGE),
-            Length(max=ORIGINAL_LEN)
+            Length(max=ORIGINAL_LEN, message=ORIGINAL_LEN_MESSAGE)
         ]
     )
     custom_id = URLField(
         CUSTOM_ID_MESSAGE,
         validators=[
             Optional(strip_whitespace=False),
-            Length(max=MAX_SHORT_LEN),
+            Length(max=SHORT_LEN, message=SHORT_LEN_MESSAGE),
             Regexp(PATTERN, message=SPACE_MESSAGE)
         ]
     )

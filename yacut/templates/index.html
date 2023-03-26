@@ -45,6 +45,11 @@
         <div class="col-sm">
           <p class="text-center">
             <h5>
+              {% with messages = get_flashed_messages() %}
+                {% for message in messages %}
+                  <span style="color:red">{{ message }}</span>
+                {% endfor %}
+              {% endwith %}
               {% if urlmap %}
                 Ваша короткая ссылка готова
                 <a href="{{ urlmap.get_short_link() }}">{{ urlmap.get_short_link() }}</a>
