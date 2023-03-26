@@ -4,12 +4,12 @@ from datetime import datetime
 
 from flask import url_for
 
-from settings import (ATTEMPTS, ORIGINAL_LEN, PATTERN, RANDOM_SHORT_LEN,
-                      SAMPLE, SHORT_LEN)
+from settings import (ATTEMPTS, ORIGINAL_LEN, PATTERN_OF_LETTERS_AND_DIGITS,
+                      RANDOM_SHORT_LEN, SAMPLE_OF_LETTERS_AND_DIGITS,
+                      SHORT_LEN)
 from yacut import db
 from yacut.error_handlers import ShortGenerateError, ValidationError
 
-# SHORT_ERROR = 'Не удалось сгенерировать уникальную короткую ссылку'
 WEB_UNIQUE_MESSAGE = 'Имя {} уже занято!'
 SHORT_MESSAGE = 'Указано недопустимое имя для короткой ссылки'
 ORIGINAL_LEN_ERROR = 'Длина оригинальной ссылки "{}" больше чем 4096'
@@ -33,7 +33,10 @@ class URLMap(db.Model):
         return url_for('short_url', short=self.short, _external=True)
 
     @staticmethod
-    def get_unique_short_id(symbols=SAMPLE, length=RANDOM_SHORT_LEN):
+    def get_unique_short_id(
+        symbols=SAMPLE_OF_LETTERS_AND_DIGITS,
+        length=RANDOM_SHORT_LEN
+    ):
         for _ in range(ATTEMPTS):
             short_link = ''.join(random.choices(symbols, k=length))
             if not URLMap.get_urlmap_by_short(short=short_link):
@@ -60,9 +63,8 @@ class URLMap(db.Model):
                 raise ValidationError(ORIGINAL_LEN_ERROR.format(original_len))
             short_len = len(short)
             if short_len > SHORT_LEN:
-                # raise ValueError(SHORT_LEN_ERROR.format(short_len))
                 raise ValidationError(SHORT_MESSAGE)
-            if not re.match(PATTERN, short):
+            if not re.match(PATTERN_OF_LETTERS_AND_DIGITS, short):
                 raise ValidationError(SHORT_MESSAGE)
             if URLMap.get_urlmap_by_short(short):
                 raise ValidationError(API_UNIQUE_SHORT_ERROR.format(short))

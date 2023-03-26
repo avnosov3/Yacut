@@ -4,8 +4,6 @@ from yacut import app
 from yacut.forms import URLMapForm
 from yacut.models import ShortGenerateError, URLMap, ValidationError
 
-SHORT_MESSAGE = 'Ваша короткая ссылка готова:'
-
 
 @app.route('/', methods=['GET', 'POST'])
 def index_view():
@@ -15,12 +13,13 @@ def index_view():
     try:
         return render_template(
             'index.html', form=form,
-            urlmap=URLMap.create(
+            short_link=URLMap.create(
                 original=form.original_link.data,
                 short=form.data.get('custom_id')
-            )
+            ).get_short_link()
         )
-    except ValidationError:
+    except ValidationError as error:
+        flash(str(error))
         abort(500)
     except ShortGenerateError as error:
         flash(str(error))

@@ -3,7 +3,7 @@ from wtforms import SubmitField, URLField
 from wtforms.validators import (URL, DataRequired, Length, Optional, Regexp,
                                 ValidationError)
 
-from settings import ORIGINAL_LEN, PATTERN, SHORT_LEN
+from settings import ORIGINAL_LEN, PATTERN_OF_LETTERS_AND_DIGITS, SHORT_LEN
 from yacut.models import WEB_UNIQUE_MESSAGE, URLMap
 
 URL_MESSAGE = 'Проверьте формат ссылки'
@@ -31,7 +31,7 @@ class URLMapForm(FlaskForm):
         validators=[
             Optional(strip_whitespace=False),
             Length(max=SHORT_LEN, message=SHORT_LEN_MESSAGE),
-            Regexp(PATTERN, message=SPACE_MESSAGE)
+            Regexp(PATTERN_OF_LETTERS_AND_DIGITS, message=SPACE_MESSAGE)
         ]
     )
     submit = SubmitField(SUMBIT_MESSAGE)
