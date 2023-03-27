@@ -1,8 +1,8 @@
-from flask import abort, flash, redirect, render_template
+from flask import flash, redirect, render_template
 
 from yacut import app
 from yacut.forms import URLMapForm
-from yacut.models import ShortGenerateError, URLMap, ValidationError
+from yacut.models import URLMap, ValidationError
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -20,10 +20,7 @@ def index_view():
         )
     except ValidationError as error:
         flash(str(error))
-        abort(500)
-    except ShortGenerateError as error:
-        flash(str(error))
-        return render_template('index.html', form=form)
+    return render_template('index.html', form=form)
 
 
 @app.route('/<string:short>')

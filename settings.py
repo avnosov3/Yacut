@@ -12,8 +12,8 @@ class Config(object):
 ORIGINAL_LEN = 4096
 SHORT_LEN = 16
 RANDOM_SHORT_LEN = 6
-SAMPLE_OF_LETTERS_AND_DIGITS = ascii_letters + digits
-PATTERN_OF_LETTERS_AND_DIGITS = (
-    rf'^[{re.escape(SAMPLE_OF_LETTERS_AND_DIGITS)}]+$'
+SYMBOLS_OF_SHORT = ascii_letters + digits
+VALID_SYMBOLS_OF_SHORT = (
+    rf'^[{re.escape(SYMBOLS_OF_SHORT)}]+$'
 )
 ATTEMPTS = 3

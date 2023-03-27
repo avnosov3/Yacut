@@ -27,11 +27,13 @@ def generate_link():
     if 'url' not in data:
         raise InvalidAPIUsage(EMPTY_URL_MESSAGE, 400)
     try:
-        return (jsonify(URLMap.create(
-            data['url'], data.get('custom_id'), to_validate=True
-        ).to_dict()),
+        return (
+            jsonify(
+                URLMap.create(
+                    data['url'], data.get('custom_id'), to_validate=True
+                ).to_dict()
+            ),
             201
         )
-
     except ValidationError as error:
         raise InvalidAPIUsage(str(error))

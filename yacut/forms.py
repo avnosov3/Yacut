@@ -1,9 +1,10 @@
 from flask_wtf import FlaskForm
 from wtforms import SubmitField, URLField
-from wtforms.validators import (URL, DataRequired, Length, Optional, Regexp,
-                                ValidationError)
+from wtforms.validators import (
+    URL, DataRequired, Length, Optional, Regexp, ValidationError
+)
 
-from settings import ORIGINAL_LEN, PATTERN_OF_LETTERS_AND_DIGITS, SHORT_LEN
+from settings import ORIGINAL_LEN, SHORT_LEN, VALID_SYMBOLS_OF_SHORT
 from yacut.models import WEB_UNIQUE_MESSAGE, URLMap
 
 URL_MESSAGE = 'Проверьте формат ссылки'
@@ -12,7 +13,6 @@ REQUIRED_FIELD_MESSAGE = 'Обязательное поле'
 ORIGINAL_LINK_MESSAGE = 'Введите длинную ссылку'
 CUSTOM_ID_MESSAGE = 'Введите короткий вариант ссылки'
 SUMBIT_MESSAGE = 'Создать'
-# WEB_UNIQUE_MESSAGE = 'Имя {} уже занято!'
 ORIGINAL_LEN_MESSAGE = f'Размер ссылки должен быть меньше {ORIGINAL_LEN}'
 SHORT_LEN_MESSAGE = f'Размер короткой ссылки должен быть меньше {SHORT_LEN}'
 
@@ -31,7 +31,7 @@ class URLMapForm(FlaskForm):
         validators=[
             Optional(strip_whitespace=False),
             Length(max=SHORT_LEN, message=SHORT_LEN_MESSAGE),
-            Regexp(PATTERN_OF_LETTERS_AND_DIGITS, message=SPACE_MESSAGE)
+            Regexp(VALID_SYMBOLS_OF_SHORT, message=SPACE_MESSAGE)
         ]
     )
     submit = SubmitField(SUMBIT_MESSAGE)

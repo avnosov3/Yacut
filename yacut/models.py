@@ -4,11 +4,12 @@ from datetime import datetime
 
 from flask import url_for
 
-from settings import (ATTEMPTS, ORIGINAL_LEN, PATTERN_OF_LETTERS_AND_DIGITS,
-                      RANDOM_SHORT_LEN, SAMPLE_OF_LETTERS_AND_DIGITS,
-                      SHORT_LEN)
+from settings import (
+    ATTEMPTS, ORIGINAL_LEN, RANDOM_SHORT_LEN, SHORT_LEN,
+    SYMBOLS_OF_SHORT, VALID_SYMBOLS_OF_SHORT
+)
 from yacut import db
-from yacut.error_handlers import ShortGenerateError, ValidationError
+from yacut.error_handlers import ValidationError
 
 WEB_UNIQUE_MESSAGE = 'Имя {} уже занято!'
 SHORT_MESSAGE = 'Указано недопустимое имя для короткой ссылки'
@@ -34,14 +35,14 @@ class URLMap(db.Model):
 
     @staticmethod
     def get_unique_short_id(
-        symbols=SAMPLE_OF_LETTERS_AND_DIGITS,
+        symbols=SYMBOLS_OF_SHORT,
         length=RANDOM_SHORT_LEN
     ):
         for _ in range(ATTEMPTS):
             short_link = ''.join(random.choices(symbols, k=length))
             if not URLMap.get_urlmap_by_short(short=short_link):
                 return short_link
-        raise ShortGenerateError(
+        raise ValidationError(
             WEB_UNIQUE_MESSAGE.format(short_link)
         )
 
@@ -55,19 +56,20 @@ class URLMap(db.Model):
 
     @staticmethod
     def create(original, short=None, to_validate=False):
-        if not short:
-            short = URLMap.get_unique_short_id()
         if to_validate:
             original_len = len(original)
             if original_len > ORIGINAL_LEN:
                 raise ValidationError(ORIGINAL_LEN_ERROR.format(original_len))
-            short_len = len(short)
-            if short_len > SHORT_LEN:
-                raise ValidationError(SHORT_MESSAGE)
-            if not re.match(PATTERN_OF_LETTERS_AND_DIGITS, short):
-                raise ValidationError(SHORT_MESSAGE)
-            if URLMap.get_urlmap_by_short(short):
-                raise ValidationError(API_UNIQUE_SHORT_ERROR.format(short))
+            if short:
+                short_len = len(short)
+                if short_len > SHORT_LEN:
+                    raise ValidationError(SHORT_MESSAGE)
+                if not re.match(VALID_SYMBOLS_OF_SHORT, short):
+                    raise ValidationError(SHORT_MESSAGE)
+                if URLMap.get_urlmap_by_short(short):
+                    raise ValidationError(API_UNIQUE_SHORT_ERROR.format(short))
+        if not short:
+            short = URLMap.get_unique_short_id()
         urlmap = URLMap(original=original, short=short)
         db.session.add(urlmap)
         db.session.commit()

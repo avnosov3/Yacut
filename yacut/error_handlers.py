@@ -32,9 +32,5 @@ def internal_error(error):
     return render_template('500.html'), 500
 
 
-class ShortGenerateError(Exception):
-    pass
-
-
 class ValidationError(Exception):
     pass
