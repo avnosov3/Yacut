@@ -34,3 +34,7 @@ def internal_error(error):
 
 class ValidationError(Exception):
     pass
+
+
+class ShortGenerateError(Exception):
+    pass 

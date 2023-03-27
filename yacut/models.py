@@ -9,7 +9,7 @@ from settings import (
     SYMBOLS_OF_SHORT, VALID_SYMBOLS_OF_SHORT
 )
 from yacut import db
-from yacut.error_handlers import ValidationError
+from yacut.error_handlers import ValidationError, ShortGenerateError
 
 WEB_UNIQUE_MESSAGE = 'Имя {} уже занято!'
 SHORT_MESSAGE = 'Указано недопустимое имя для короткой ссылки'
@@ -42,7 +42,7 @@ class URLMap(db.Model):
             short_link = ''.join(random.choices(symbols, k=length))
             if not URLMap.get_urlmap_by_short(short=short_link):
                 return short_link
-        raise ValidationError(
+        raise ShortGenerateError(
             WEB_UNIQUE_MESSAGE.format(short_link)
         )
 
