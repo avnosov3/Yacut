@@ -1,6 +1,6 @@
-# YaCut
+# [YaCut](http://bkru.pythonanywhere.com/)
 
-Сервис укорачивания ссылок
+[Сервис](http://bkru.pythonanywhere.com/) укорачивания ссылок
 
 ## Техно-стек
 * python 3.7.9
