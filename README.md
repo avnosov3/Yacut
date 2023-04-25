@@ -5,6 +5,8 @@
 ## Техно-стек
 * python 3.7.9
 * flask 2.0.2
+* flask-sqlalchemy 2.5.1
+* flask-migrate 3.1.0
 
 
 1. Клонировать репозиторий
