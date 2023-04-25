@@ -1,59 +1,41 @@
-### Описание проекта:
+# YaCut
 
 Сервис укорачивания ссылок
 
-### Автор: [Артём Носов](https://github.com/avnosov3)
-
-### Техно-стек:
+## Техно-стек
 * python 3.7.9
 * flask 2.0.2
 
-Клонировать репозиторий и перейти в него в командной строке:
 
+1. Клонировать репозиторий
 ```
 git clone git@github.com:avnosov3/yacut.git
 ```
-
+2. Перейти в папку с проектом и создать виртуальное окружение
 ```
 cd yacut
 ```
-
-Cоздать и активировать виртуальное окружение:
-
 ```
-python3 -m venv venv
+python3 -m venv env
+python -m venv venv (Windows)
 ```
-
-* Если у вас Linux/macOS
-
-    ```
-    source venv/bin/activate
-    ```
-
-* Если у вас windows
-
-    ```
-    source venv/scripts/activate
-    ```
-
-Установить зависимости из файла requirements.txt:
-
+3. Активировать виртуальное окружение
 ```
-python3 -m pip install --upgrade pip
+source env/bin/activate
+source venv/Scripts/activate (Windows)
 ```
-
+4. Установить зависимости из файла requirements.txt:
 ```
-pip install -r requirements.txt
+pip3 install -r requirements.txt
+pip install -r requirements.txt (Windows)
 ```
-
-Провести миграции
-
+5. Провести миграции
 ```
 flask db upgrade
 ```
-
-Запустить проект
-
+6. Запустить проект
 ```
 flask run
 ```
+
+## Автор: [Артём Носов](https://github.com/avnosov3)
