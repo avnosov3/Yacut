@@ -31,11 +31,18 @@ source venv/Scripts/activate (Windows)
 pip3 install -r requirements.txt
 pip install -r requirements.txt (Windows)
 ```
-5. Провести миграции
+5. Создать и заполнить файл .env в корне
+```
+FLASK_APP=yacut
+FLASK_ENV=development(режим разработки) или production(боевой режим)
+DATABASE_URI=sqlite:///db.sqlite3
+SECRET_KEY=<указать секретный ключ>
+```
+6. Провести миграции
 ```
 flask db upgrade
 ```
-6. Запустить проект
+7. Запустить проект
 ```
 flask run
 ```
