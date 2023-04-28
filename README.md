@@ -47,4 +47,5 @@ flask db upgrade
 flask run
 ```
 
-## Автор: [Артём Носов](https://github.com/avnosov3)
+## Автор
+[Артём Носов](https://github.com/avnosov3)
