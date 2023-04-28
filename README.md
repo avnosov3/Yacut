@@ -31,7 +31,7 @@ source venv/Scripts/activate (Windows)
 pip3 install -r requirements.txt
 pip install -r requirements.txt (Windows)
 ```
-5. Создать и заполнить файл .env в корне
+5. Создать и заполнить файл .env
 ```
 FLASK_APP=yacut
 FLASK_ENV=development(режим разработки) или production(боевой режим)
