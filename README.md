@@ -15,7 +15,7 @@ git clone git@github.com:avnosov3/Yacut.git
 ```
 2. Перейти в папку с проектом и создать виртуальное окружение
 ```
-cd yacut
+cd Yacut
 ```
 ```
 python3 -m venv env
